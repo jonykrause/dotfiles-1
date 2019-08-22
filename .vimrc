@@ -1,7 +1,57 @@
-" Use the Solarized Dark theme
+" Setting up Vundle - the vim plugin bundler
+if has('nvim')
+    let s:editor_root=expand("~/.nvim")
+else
+    let s:editor_root=expand("~/.vim")
+endif
+let vundle_installed=1
+let vundle_readme=s:editor_root . '/bundle/vundle/README.md'
+if !filereadable(vundle_readme)
+    echo "Installing Vundle.."
+    echo ""
+    " silent execute "! mkdir -p ~/." . s:editor_path_name . "/bundle"
+    silent call mkdir(s:editor_root . '/bundle', "p")
+    silent execute "!git clone https://github.com/gmarik/vundle " . s:editor_root . "/bundle/vundle"
+    let vundle_installed=0
+endif
+let &rtp = &rtp . ',' . s:editor_root . '/bundle/vundle/'
+call vundle#rc(s:editor_root . '/bundle')
+
+Plugin 'gmarik/vundle.vim'
+Plugin 'mileszs/ack.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'jistr/vim-nerdtree-tabs'
+Plugin 'JazzCore/ctrlp-cmatcher'
+Plugin 'jasoncodes/ctrlp-modified.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'honza/vim-snippets'
+Plugin 'tpope/vim-sensible'
+Plugin 'lifepillar/vim-solarized8'
+Plugin 'pangloss/vim-javascript'
+Plugin 'jelera/vim-javascript-syntax'
+Plugin 'editorconfig/editorconfig-vim'
+Plugin 'ternjs/tern_for_vim'
+
+if vundle_installed == 0
+    echo "Installing Bundles, please ignore key map error messages"
+    echo ""
+    :BundleInstall
+endif
+
+call vundle#end() " required
+filetype plugin indent on " required
+
+set omnifunc=syntaxcomplete#Complete
+
+" Setting up Vundle - the vim plugin bundler end
+
+" set Vim-specific sequences for RGB colors
+set termguicolors
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+
 set background=dark
-colorscheme solarized
-let g:solarized_termtrans=1
+colorscheme solarized8
 
 " Make Vim more useful
 set nocompatible
@@ -35,8 +85,8 @@ endif
 set backupskip=/tmp/*,/private/tmp/*
 
 " Respect modeline in files
-set modeline
-set modelines=4
+" set modeline
+" set modelines=4
 " Enable per-directory .vimrc files and disable unsafe commands in them
 set exrc
 set secure
@@ -76,10 +126,10 @@ set title
 " Show the (partial) command as it’s being typed
 set showcmd
 " Use relative line numbers
-if exists("&relativenumber")
-	set relativenumber
-	au BufReadPost * set relativenumber
-endif
+" if exists("&relativenumber")
+"	set relativenumber
+"	au BufReadPost * set relativenumber
+"endif
 " Start scrolling three lines before the horizontal window border
 set scrolloff=3
 
@@ -104,3 +154,11 @@ if has("autocmd")
 	" Treat .md files as Markdown
 	autocmd BufNewFile,BufRead *.md setlocal filetype=markdown
 endif
+
+" init prettier
+" autocmd FileType javascript set formatprg=prettier\ --stdin
+" prettier on save
+" autocmd BufWritePre *.js :normal gggqG
+"
+nnoremap  <silent>   <tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bnext<CR>
+nnoremap  <silent> <s-tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bprevious<CR>
